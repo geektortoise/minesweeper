@@ -43,4 +43,10 @@ export class TileService {
     }
     return tiles;
   }
+
+  getDeadTile(): Tile {
+    let tile = new Tile(99, false);
+    tile.isEnabled = false;
+    return tile;
+  }
 }

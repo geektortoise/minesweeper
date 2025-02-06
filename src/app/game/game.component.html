@@ -6,7 +6,14 @@
   />
   <br />
   <br />
-  <table>
+  <div style="display: flex; justify-content: center; column-gap: 80px">
+    @for (boardType of boardTypes; track $index) {
+      <span class="button" (click)="selectBoardType(boardType)">{{
+        boardType
+      }}</span>
+    }
+  </div>
+  <!--<table>
     <tr>
       <td>
         <span
@@ -69,5 +76,6 @@
     (notifyGameStatus)="updateGameStatus($event)"
     (restartGameEvent)="startNewGame()"
     #minesweeper
-  ></classical-board>
+  ></classical-board>-->
+  <ng-template #boardSlot></ng-template>
 </div>

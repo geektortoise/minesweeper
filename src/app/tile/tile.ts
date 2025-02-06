@@ -9,6 +9,7 @@ export class Tile {
   isFlagged: boolean;
   // the neighboorhood
   neighbors: Tile[];
+  isEnabled: boolean;
 
   constructor(id: number, isMine: boolean) {
     this.id = id;
@@ -16,6 +17,7 @@ export class Tile {
     this.isRevealed = false;
     this.isFlagged = false;
     this.neighbors = [];
+    this.isEnabled = true;
   }
 
   getThreatCount(): number {
