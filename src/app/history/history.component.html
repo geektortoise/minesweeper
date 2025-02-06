@@ -1,30 +1,33 @@
 <br />
-<div *ngIf="history.length > 0; else elseBlock" class="container">
-  <table>
-    <tr class="custom-th">
-      <th>{{ "history.status" | transloco }}</th>
-      <th>{{ "history.mode" | transloco }}</th>
-      <th>{{ "history.time" | transloco }}</th>
-      <th>{{ "history.flagged" | transloco }}</th>
-      <th>{{ "history.date" | transloco }}</th>
-    </tr>
-    <tr *ngFor="let item of history">
-      <td>{{ item.status | transloco }}</td>
-      <td>
-        {{ item.mode | transloco }}
-        <span *ngIf="item.mode === 'Custom'"
-          >({{ item.input.row }}x{{ item.input.column }})</span
-        >
-      </td>
-      <td>{{ item.time * 1000 | date: "mm:ss" }}</td>
-      <td>{{ item.flagged }}</td>
-      <td>{{ item.date | date: "d MMM y HH:mm:ss" }}</td>
-    </tr>
-  </table>
-</div>
-<ng-template #elseBlock>
+@if (history.length > 0) {
+  <div class="container">
+    <table>
+      <tr class="custom-th">
+        <th>{{ "history.status" | transloco }}</th>
+        <th>{{ "history.mode" | transloco }}</th>
+        <th>{{ "history.time" | transloco }}</th>
+        <th>{{ "history.flagged" | transloco }}</th>
+        <th>{{ "history.date" | transloco }}</th>
+      </tr>
+      @for (item of history; track item.date) {
+        <tr>
+          <td>{{ item.status | transloco }}</td>
+          <td>
+            {{ item.mode | transloco }}
+            @if (item.mode === "Custom") {
+              <span> ({{ item.input?.row }}x{{ item.input?.column }}) </span>
+            }
+          </td>
+          <td>{{ item.time * 1000 | date: "mm:ss" }}</td>
+          <td>{{ item.flagged }}</td>
+          <td>{{ item.date | date: "d MMM y HH:mm:ss" }}</td>
+        </tr>
+      }
+    </table>
+  </div>
+} @else {
   <div class="no-information">
     <h2>{{ "history.empty" | transloco }}</h2>
   </div>
-</ng-template>
+}
 <br />

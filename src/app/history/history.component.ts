@@ -1,17 +1,17 @@
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../service/storage/storage.service';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { HistoryRecord } from '../utils/types';
 
 @Component({
   selector: 'history',
-  standalone: true,
-  imports: [NgFor, DatePipe, NgIf, TranslocoPipe],
+  imports: [DatePipe, TranslocoPipe],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
 })
 export class HistoryComponent implements OnInit {
-  history!: Array<any>;
+  history!: Array<HistoryRecord>;
 
   constructor(private storageService: StorageService) {}
 

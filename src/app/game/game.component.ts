@@ -1,13 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { ClassicalBoardComponent } from '../board/classical-board/classical-board.component';
-import { DatePipe, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfettiService } from '../service/confetti/confetti.service';
 import { TimerService } from '../service/timer/timer.service';
 import { StorageService } from '../service/storage/storage.service';
 import { HistoryComponent } from '../history/history.component';
 import {
-  BoardInput,
   GameMode,
   HistoryRecord,
   NotificationStatus,
@@ -16,16 +14,14 @@ import {
 } from '../utils/types';
 import { OverlayComponent } from '../overlay/overlay.component';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'game',
-  standalone: true,
   imports: [
     ClassicalBoardComponent,
     HistoryComponent,
-    NgIf,
     FormsModule,
-    DatePipe,
     FormsModule,
     OverlayComponent,
     TranslocoPipe,
@@ -34,14 +30,21 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
   styleUrl: './game.component.css',
 })
 export class GameComponent {
-  result: undefined | 'ONGOING' | 'WON' | 'GAMEOVER';
-  @ViewChild('minesweeper') minesweeper!: ClassicalBoardComponent;
+  result: 'NOT_STARTED' | 'ONGOING' | 'WON' | 'GAMEOVER';
+  //@ViewChild('minesweeper') minesweeper!: ClassicalBoardComponent;
+  boardRowsNumber = signal<number>(10);
+  boardColumnsNumber = signal<number>(10);
+  boardMinesNumber = signal<number>(10);
+
+  _resetBoard = new Subject<void>();
+  resetBoard = this._resetBoard.asObservable();
+
+  maxMines = computed(() => {
+    return this.boardRowsNumber() * this.boardColumnsNumber();
+  });
 
   mode: GameMode = GameMode.BEGINNER;
   displayInputs: boolean = false;
-  maxMines: number = 0;
-  playingTime: number = 0;
-  input: BoardInput = { row: 1, column: 1, mine: 1 };
   overlayData: OverlayData = {
     display: false,
     content: OverlayContent.HISTORY,
@@ -57,15 +60,14 @@ export class GameComponent {
     if (mode) {
       this.mode = mode as GameMode;
     }
-    if (rows !== undefined && columns !== undefined && mines !== undefined) {
-      this.minesweeper.rowsNumber = rows;
-      this.minesweeper.columnsNumber = columns;
-      this.minesweeper.minesNumber = mines;
-    }
-    this.minesweeper.initializeBoard();
-    this.result = undefined;
+    this.result = 'NOT_STARTED';
     this.timerService.clear();
     this.conffetiService.stopConfettis(true);
+    if (rows !== undefined && columns !== undefined && mines !== undefined) {
+      this.boardRowsNumber.set(rows);
+      this.boardColumnsNumber.set(columns);
+      this.boardMinesNumber.set(mines);
+    }
   }
 
   updateGameStatus(event: NotificationStatus) {
@@ -76,7 +78,11 @@ export class GameComponent {
         date: new Date(),
       };
       if (this.mode === GameMode.CUSTOM) {
-        record.input = this.input;
+        record.input = {
+          row: this.boardRowsNumber(),
+          column: this.boardColumnsNumber(),
+          mine: this.boardMinesNumber(),
+        };
       }
       this.storageService.insertHistoryRecord(record);
       if (event.status === 'WON') {
@@ -100,16 +106,15 @@ export class GameComponent {
     if (!this.displayInputs) {
       this.displayInputs = true;
     }
-    this.input = { row: 3, column: 3, mine: 1 };
-    this.updateBoard();
-  }
-
-  updateBoard() {
-    this.maxMines = this.input.row * this.input.column;
-    this.startNewGame(this.input.row, this.input.column, this.input.mine);
+    this.boardRowsNumber.set(3);
+    this.boardColumnsNumber.set(3);
+    this.boardMinesNumber.set(1);
+    this.startNewGame();
   }
 
   settings() {
     this.overlayData = { display: true, content: OverlayContent.HISTORY };
   }
+
+  protected readonly Number = Number;
 }

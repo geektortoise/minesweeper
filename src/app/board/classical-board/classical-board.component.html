@@ -1,21 +1,24 @@
 <div class="scene">
   <div class="board">
     <div class="banner">
-      <div class="box right">{{ minesNumber - flagsNumber }}</div>
+      <div class="box right">{{ remainingMinesToDiscover() }}</div>
       <div
         class="box"
-        [class]="'axo-button-' + getGameStatus()"
+        [class]="'axo-button-' + gameStatus()"
         (click)="restartGame()"
       ></div>
       <div class="box left">{{ (timerService.timerEmitter | async) || 0 }}</div>
     </div>
-    <div *ngFor="let row of tiles" class="row">
-      <tile
-        *ngFor="let tile of row"
-        [tile]="tile"
-        (click)="handleTileClick(tile)"
-        (contextmenu)="onRightClick(tile)"
-      ></tile>
-    </div>
+    @for (row of tiles(); track row) {
+      <div class="row">
+        @for (tile of row; track tile.id) {
+          <tile
+            [tile]="tile"
+            (click)="handleTileClick(tile)"
+            (contextmenu)="onRightClick(tile)"
+          ></tile>
+        }
+      </div>
+    }
   </div>
 </div>

@@ -5,7 +5,6 @@ import { StorageService } from './service/storage/storage.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [GameComponent],
   templateUrl: './app.component.html',
 })
