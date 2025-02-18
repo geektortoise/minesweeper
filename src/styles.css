@@ -60,3 +60,31 @@ ul.actions li {
   background-color: #a7abb2;
   color: #e0e2e4;
 }
+
+table,
+td,
+th {
+  padding: 20px;
+}
+
+table {
+  width: auto;
+  margin: auto;
+  border-collapse: collapse;
+}
+
+input {
+  width: 60px;
+  height: 20px;
+}
+
+.button {
+  padding: 16px;
+  background-image: radial-gradient(circle at top left, #e0e2e4, #a3a7ae);
+  cursor: pointer;
+  border: 2px solid #606368;
+}
+
+.button:hover {
+  background-image: radial-gradient(circle at bottom right, #e0e2e4, #a3a7ae);
+}

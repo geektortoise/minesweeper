@@ -1,36 +1,58 @@
 {
+  "level" : {
     "beginner": {
-        "title": "Beginner",
-        "catchphrase": "A good place to start !"
+      "title": "Beginner",
+      "catchphrase": "A good place to start !"
     },
     "intermediate": {
-        "title": "Intermediate",
-        "catchphrase": "A bit more challenging !"
+      "title": "Intermediate",
+      "catchphrase": "A bit more challenging !"
     },
     "expert": {
-        "title": "Expert",
-        "catchphrase": "For the tryharders !"
+      "title": "Expert",
+      "catchphrase": "For the tryharders !"
     },
     "custom": {
-        "title": "Custom",
-        "catchphrase": "Set your own rules !"
+      "title": "Custom",
+      "catchphrase": "Set your own rules !"
+    }
+  },
+  "board" : {
+    "classic": {
+      "title": "Classic",
+      "catchphrase": "The one you know."
     },
-    "rows": "Rows",
-    "columns": "Columns",
-    "mines": "Mines",
-    "history": {
-        "title": "Game history",
-        "status": "Status",
-        "mode": "Mode",
-        "time": "Playing time",
-        "flagged": "Flagged mines",
-        "date": "Date",
-        "empty": "No game history yet."
+    "toric": {
+      "title": "Toric",
+      "catchphrase": "A world without borders!"
     },
-    "WON": "Won",
-    "GAMEOVER": "Game over",
-    "Beginner": "Beginner",
-    "Intermediate": "Intermediate",
-    "Expert": "Expert",
-    "Custom": "Custom"
+    "circle": {
+      "title": "Circle",
+      "catchphrase": "You spin me right round ..."
+    },
+    "diamond": {
+      "title": "Diamond",
+      "catchphrase": "Why not?"
+    },
+    "axo": {
+      "title": "Axo",
+      "catchphrase": "An emoji?!"
+    }
+  },
+  "history": {
+    "title": "Game history",
+    "status": "Status",
+    "type": "Type",
+    "mode": "Mode",
+    "time": "Playing time",
+    "flagged": "Flagged mines",
+    "date": "Date",
+    "empty": "No game history yet."
+  },
+  "rows": "Rows",
+  "columns": "Columns",
+  "radius": "Radius",
+  "mines": "Mines",
+  "WON": "Won",
+  "GAMEOVER": "Game over"
 }

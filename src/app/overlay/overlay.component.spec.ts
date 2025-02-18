@@ -8,12 +8,13 @@ describe('OverlayComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OverlayComponent]
-    })
-    .compileComponents();
-    
+      imports: [OverlayComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(OverlayComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('overlayData', { display: false });
+
     fixture.detectChanges();
   });
 

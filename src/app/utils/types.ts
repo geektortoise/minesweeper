@@ -1,10 +1,29 @@
 export type GenerationStrategy = 'AT_FIRST_CLICK' | 'BEFORE_STARTING';
 
 export enum GameMode {
-  BEGINNER = 'Beginner',
-  INTERMEDIATE = 'Intermediate',
-  EXPERT = 'Expert',
-  CUSTOM = 'Custom',
+  BEGINNER = 'beginner',
+  INTERMEDIATE = 'intermediate',
+  EXPERT = 'expert',
+  CUSTOM = 'custom',
+}
+
+export enum BoardType {
+  Classic = 'classic',
+  Toric = 'toric',
+  Circle = 'circle',
+  Diamond = 'diamond',
+  Axo = 'axo',
+}
+
+export type GridDimensionOption = {
+  label: string;
+  settingName: string;
+  min: number;
+};
+
+export interface BoardInput {
+  dimensions: number[];
+  mines: number;
 }
 
 export interface NotificationStatus {
@@ -14,16 +33,11 @@ export interface NotificationStatus {
 }
 
 export type HistoryRecord = NotificationStatus & {
-  mode: GameMode;
+  level: GameMode;
+  type: BoardType;
   date: Date;
-  input?: BoardInput;
+  inputs?: BoardInput;
 };
-
-export interface BoardInput {
-  row: number;
-  column: number;
-  mine: number;
-}
 
 export interface OverlayData {
   display: boolean;

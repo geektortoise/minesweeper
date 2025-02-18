@@ -1,34 +1,31 @@
 import { Component, computed } from '@angular/core';
+import { Tile } from '../../model/tile';
 import { TileComponent } from '../../tile/tile.component';
 import { AsyncPipe } from '@angular/common';
-import { ClassicalBoardService } from '../../service/board/classical-board/classical-board.service';
-import { BiDimensionalBoard } from '../../model/bi-dimensional-board';
 import { GenerationStrategy } from '../../utils/types';
-import { TimerService } from '../../service/timer/timer.service';
 import { BoardComponent } from '../board.component';
-import { Tile } from '../../model/tile';
+import { TimerService } from '../../service/timer/timer.service';
+import { DiamondBoardService } from '../../service/board/special-board/diamond-board.service';
+import { BiDimensionalBoard } from '../../model/bi-dimensional-board';
 import { StateService } from '../../service/state/state.service';
 
 @Component({
   selector: 'classical-board',
   imports: [TileComponent, AsyncPipe],
-  templateUrl: './classical-board.component.html',
-  styleUrl: './classical-board.component.css',
+  templateUrl: './../classical-board/classical-board.component.html',
+  styleUrl: './../classical-board/classical-board.component.css',
 })
-export class ClassicalBoardComponent extends BoardComponent<BiDimensionalBoard> {
-  rowsNumber = computed(
-    () => this.stateService.getGameSettings()().get('rowsNumber') ?? 10,
-  );
-  columnsNumber = computed(
-    () => this.stateService.getGameSettings()().get('columnsNumber') ?? 10,
+export class DiamondBoardComponent extends BoardComponent<BiDimensionalBoard> {
+  radius = computed(
+    () => this.stateService.getGameSettings()().get('radius') ?? 7,
   );
 
   tiles = computed(() => this.board().tiles);
 
-  protected generationStrategy: GenerationStrategy = 'AT_FIRST_CLICK';
+  private generationStrategy: GenerationStrategy = 'AT_FIRST_CLICK';
 
   constructor(
-    public override boardService: ClassicalBoardService,
+    public override boardService: DiamondBoardService,
     protected override stateService: StateService,
     public override timerService: TimerService,
   ) {
@@ -37,8 +34,7 @@ export class ClassicalBoardComponent extends BoardComponent<BiDimensionalBoard> 
 
   initializeTileBoard(): BiDimensionalBoard {
     return this.boardService.generateTileBoard(
-      this.rowsNumber(),
-      this.columnsNumber(),
+      this.radius(),
       this.minesNumber(),
       this.generationStrategy,
     );

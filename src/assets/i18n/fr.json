@@ -1,36 +1,58 @@
 {
+  "level" : {
     "beginner": {
-        "title": "Débutant",
-        "catchphrase": "Faut bien commencer quelque part !"
+      "title": "Débutant",
+      "catchphrase": "Faut bien commencer quelque part !"
     },
     "intermediate": {
-        "title": "Intermédiaire",
-        "catchphrase": "Ça commence à chauffer !"
+      "title": "Intermédiaire",
+      "catchphrase": "Ça commence à chauffer !"
     },
     "expert": {
-        "title": "Expert",
-        "catchphrase": "Seulement pour les boss du game !"
+      "title": "Expert",
+      "catchphrase": "Seulement pour les boss du game !"
     },
     "custom": {
-        "title": "Personnalisé",
-        "catchphrase": "Pourquoi suivre les règles quand tu peux les créer ?"
+      "title": "Personnalisé",
+      "catchphrase": "Pourquoi suivre les règles quand tu peux les créer ?"
+    }
+  },
+  "board" : {
+    "classic": {
+      "title": "Classique",
+      "catchphrase": "Le traditionnel."
     },
-    "rows": "Rangées",
-    "columns": "Colonnes",
-    "mines": "Mines",
-    "history": {
-        "title": "Historique de jeu",
-        "status": "Statut",
-        "mode": "Mode",
-        "time": "Temps de jeu",
-        "flagged": "Mines marquées",
-        "date": "Date",
-        "empty": "Pas encore d'historique de jeu."
+    "toric": {
+      "title": "Torique",
+      "catchphrase": "Sans toucher les bords !"
     },
-    "WON": "Gagné",
-    "GAMEOVER": "Perdu",
-    "Beginner": "Débutant",
-    "Intermediate": "Intermédiaire",
-    "Expert": "Expert",
-    "Custom": "Personnalisé"
+    "circle": {
+      "title": "Cercle",
+      "catchphrase": "Encerclé !"
+    },
+    "diamond": {
+      "title": "Diamant",
+      "catchphrase": "Une autre façon de jouer"
+    },
+    "axo": {
+      "title": "Axo",
+      "catchphrase": "Un émoji ?!"
+    }
+  },
+  "history": {
+    "title": "Historique de jeu",
+    "status": "Statut",
+    "type": "Type",
+    "mode": "Mode",
+    "time": "Temps de jeu",
+    "flagged": "Mines marquées",
+    "date": "Date",
+    "empty": "Pas encore d'historique de jeu."
+  },
+  "rows": "Rangées",
+  "columns": "Colonnes",
+  "radius": "Rayon",
+  "mines": "Mines",
+  "WON": "Gagné",
+  "GAMEOVER": "Perdu"
 }

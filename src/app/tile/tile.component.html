@@ -1,16 +1,20 @@
-<div
-  class="tile"
-  [class.mine]="tile().isRevealed && tile().isMine"
-  [class.flagged]="tile().isFlagged"
-  [class.revealed]="tile().isRevealed"
->
-  @if (!tile().isRevealed && !tile().isFlagged) {
-    <div class="lid"></div>
-  } @else if (tile().isRevealed && !tile().isMine) {
-    <div>
-      {{ tile().getThreatCount() > 0 ? tile().getThreatCount() : "" }}
-    </div>
-  } @else if (tile().isRevealed && tile().isMine) {
-    <div></div>
-  }
-</div>
+@if (tile().isEnabled) {
+  <div
+    class="tile"
+    [class.mine]="tile().isRevealed && tile().isMine"
+    [class.flagged]="tile().isFlagged"
+    [class.revealed]="tile().isRevealed"
+  >
+    @if (!tile().isRevealed && !tile().isFlagged) {
+      <div class="lid"></div>
+    } @else if (tile().isRevealed && !tile().isMine) {
+      <div>
+        {{ tile().getThreatCount() > 0 ? tile().getThreatCount() : "" }}
+      </div>
+    } @else if (tile().isRevealed && tile().isMine) {
+      <div></div>
+    }
+  </div>
+} @else {
+  <div class="tile deadTile"></div>
+}
