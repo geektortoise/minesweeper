@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-//import { confetti } from 'tsparticles-confetti';
+import { confetti } from '@tsparticles/confetti';
 
 @Injectable({ providedIn: 'root' })
 export class ConfettiService {
@@ -19,7 +19,7 @@ export class ConfettiService {
 
       const particleCount = 20 * (timeLeft / duration);
 
-      /*confetti(
+      confetti(
         Object.assign({}, defaults, {
           particleCount,
           origin: {
@@ -36,7 +36,7 @@ export class ConfettiService {
             y: Math.random() - 0.2,
           },
         }),
-      );*/
+      );
     }, 250);
   }
 

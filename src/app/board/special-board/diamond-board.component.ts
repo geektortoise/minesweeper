@@ -10,7 +10,7 @@ import { BiDimensionalBoard } from '../../model/bi-dimensional-board';
 import { StateService } from '../../service/state/state.service';
 
 @Component({
-  selector: 'classical-board',
+  selector: 'diamond-board',
   imports: [TileComponent, AsyncPipe],
   templateUrl: './../classical-board/classical-board.component.html',
   styleUrl: './../classical-board/classical-board.component.css',
