@@ -45,45 +45,46 @@
         >
       </td>
     </tr>
-    <tr *ngIf="displayInputs">
-      <td>
-        <b>{{ "rows" | transloco }}: </b
-        ><input
-          type="number"
-          min="3"
-          [(ngModel)]="input.row"
-          (input)="updateBoard()"
-        />
-      </td>
-      <td>
-        <b>{{ "columns" | transloco }}: </b
-        ><input
-          type="number"
-          min="3"
-          [(ngModel)]="input.column"
-          (input)="updateBoard()"
-        />
-      </td>
-      <td>
-        <b>{{ "mines" | transloco }}: </b
-        ><input
-          type="number"
-          min="1"
-          [(ngModel)]="input.mine"
-          [max]="maxMines"
-          (input)="updateBoard()"
-        />
-      </td>
-    </tr>
+    @if (displayInputs) {
+      <tr>
+        <td>
+          <b>{{ "rows" | transloco }}: </b>
+          <input
+            #customRowsInput
+            type="number"
+            min="3"
+            (input)="boardRowsNumber.set(Number(customRowsInput.value))"
+          />
+        </td>
+        <td>
+          <b>{{ "columns" | transloco }}: </b>
+          <input
+            #customColumnsInput
+            type="number"
+            min="3"
+            (input)="boardColumnsNumber.set(Number(customColumnsInput.value))"
+          />
+        </td>
+        <td>
+          <b>{{ "mines" | transloco }}: </b>
+          <input
+            #customMinesInput
+            type="number"
+            min="1"
+            [max]="maxMines()"
+            (input)="boardMinesNumber.set(Number(customMinesInput.value))"
+          />
+        </td>
+      </tr>
+    }
   </table>
 
   <classical-board
-    [rowsNumber]="10"
-    [columnsNumber]="10"
-    [minesNumber]="18"
+    [rowsNumber]="boardRowsNumber()"
+    [columnsNumber]="boardColumnsNumber()"
+    [minesNumber]="boardMinesNumber()"
     (notifyGameStatus)="updateGameStatus($event)"
     (restartGameEvent)="startNewGame()"
-    #minesweeper
   ></classical-board>
 
   <overlay [overlayData]="overlayData"></overlay>

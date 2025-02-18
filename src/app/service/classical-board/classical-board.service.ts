@@ -123,23 +123,33 @@ export class ClassicalBoardService {
     let boardSize = tileBoard[0].length * tileBoard.length;
 
     minesNumber = Math.min(boardSize, minesNumber);
-    let isItPossible = true;
+    //let isItPossible = true;
+    //if (boardSize - tilesToAvoid.length < minesNumber) isItPossible = false;
 
-    if (boardSize - tilesToAvoid.length < minesNumber) isItPossible = false;
+    while (boardSize - tilesToAvoid.length < minesNumber) {
+      tilesToAvoid.shift();
+    }
 
     while (minesNumber > 0) {
       let row = Util.getRandomInt(0, tileBoard.length);
       let column = Util.getRandomInt(0, tileBoard[0].length);
       let evaluatedTile = tileBoard[row][column];
       if (
-        !isItPossible ||
-        (!tilesToAvoid.includes(evaluatedTile) && !evaluatedTile.isMine)
+        //!isItPossible ||
+        !tilesToAvoid.includes(evaluatedTile) &&
+        !evaluatedTile.isMine
       ) {
         evaluatedTile.isMine = true;
         minesNumber--;
       }
     }
+  }
 
-    return;
+  getDefaultEmptyBoard(): ClassicalBoard {
+    let classicalBoard = new ClassicalBoard(0, 0);
+    classicalBoard.tileSet = [];
+    classicalBoard.tiles = [[]];
+    classicalBoard.numberOfUnRevealedTiles = 0;
+    return classicalBoard;
   }
 }

@@ -1,12 +1,16 @@
 <div
   class="tile"
-  [class.mine]="tile.isRevealed && tile.isMine"
-  [class.flagged]="tile.isFlagged"
-  [class.revealed]="tile.isRevealed"
+  [class.mine]="tile().isRevealed && tile().isMine"
+  [class.flagged]="tile().isFlagged"
+  [class.revealed]="tile().isRevealed"
 >
-  <div class="lid" *ngIf="!tile.isRevealed && !tile.isFlagged"></div>
-  <div *ngIf="tile.isRevealed && !tile.isMine">
-    {{ tile.getThreatCount() > 0 ? tile.getThreatCount() : "" }}
-  </div>
-  <div *ngIf="tile.isRevealed && tile.isMine"></div>
+  @if (!tile().isRevealed && !tile().isFlagged) {
+    <div class="lid"></div>
+  } @else if (tile().isRevealed && !tile().isMine) {
+    <div>
+      {{ tile().getThreatCount() > 0 ? tile().getThreatCount() : "" }}
+    </div>
+  } @else if (tile().isRevealed && tile().isMine) {
+    <div></div>
+  }
 </div>

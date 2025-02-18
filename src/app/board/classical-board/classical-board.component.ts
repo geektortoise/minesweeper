@@ -1,61 +1,117 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 import { Tile } from '../../tile/tile';
 import { TileComponent } from '../../tile/tile.component';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ClassicalBoardService } from '../../service/classical-board/classical-board.service';
 import { ClassicalBoard } from './classical-board';
 import { GenerationStrategy, NotificationStatus } from '../../utils/types';
 import { TimerService } from '../../service/timer/timer.service';
+import { isEqual } from 'lodash';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'classical-board',
-  standalone: true,
-  imports: [TileComponent, NgForOf, NgIf, AsyncPipe],
+  imports: [TileComponent, AsyncPipe],
   templateUrl: './classical-board.component.html',
   styleUrl: './classical-board.component.css',
 })
-export class ClassicalBoardComponent implements OnInit {
-  @Input() rowsNumber!: number;
-  @Input() columnsNumber!: number;
-  @Input() minesNumber!: number;
-  @Output() notifyGameStatus: EventEmitter<NotificationStatus> =
-    new EventEmitter();
-  @Output() restartGameEvent: EventEmitter<void> = new EventEmitter();
-  board!: ClassicalBoard;
-  flagsNumber: number = 0;
+export class ClassicalBoardComponent {
+  rowsNumber = input.required<number>();
+  columnsNumber = input.required<number>();
+  minesNumber = input.required<number>();
+
+  notifyGameStatus = output<NotificationStatus>();
+  restartGameEvent = output<void>();
+
+  private board: WritableSignal<ClassicalBoard> = signal(
+    this.boardService.getDefaultEmptyBoard() /*{
+    equal: (a, b) => {
+      console.log('RH in equality check');
+      console.log('a = '+a.status);
+      console.log('b = '+b.status);
+      return isEqual(a, b);
+    },
+  }*/,
+  );
+  //(a, b) => JSON.stringify(a) === JSON.stringify(b),
+  tiles = computed(() => this.board().tiles);
+  flagsNumber = signal<number>(0);
+  remainingMinesToDiscover = computed(
+    () => this.minesNumber() - this.flagsNumber(),
+  );
+
   private hasStarted: boolean = false;
   private firstTileRevealed: boolean = false;
   private generationStrategy: GenerationStrategy = 'AT_FIRST_CLICK';
 
-  constructor(
-    private tileService: ClassicalBoardService,
-    public timerService: TimerService,
-  ) {}
+  gameStatus: Signal<string> = computed(() => {
+    console.log('update GameStatus signal ' + this.board().status);
+    if (this.board().status == 'GAMEOVER') return 'lost';
+    if (this.board().status == 'WON') return 'won';
+    return 'play';
+  });
 
-  ngOnInit(): void {
-    this.initializeBoard();
+  constructor(
+    private boardService: ClassicalBoardService,
+    public timerService: TimerService,
+  ) {
+    effect(() => {
+      console.log('this.initializeBoard');
+      console.log(
+        this.rowsNumber() +
+          '-' +
+          this.columnsNumber() +
+          '-' +
+          this.minesNumber(),
+      );
+      this.initializeBoard(
+        this.rowsNumber(),
+        this.columnsNumber(),
+        this.minesNumber(),
+      );
+    });
   }
 
-  initializeBoard() {
-    this.board = this.tileService.generateTileBoard(
-      this.rowsNumber,
-      this.columnsNumber,
-      this.minesNumber,
+  initializeBoard(
+    rowsNumber: number,
+    columnsNumber: number,
+    minesNumber: number,
+  ) {
+    let initBoard = this.boardService.generateTileBoard(
+      rowsNumber,
+      columnsNumber,
+      minesNumber,
       this.generationStrategy,
     );
-    this.board.status = 'ONGOING';
+    initBoard.status = 'ONGOING';
+
+    this.board.set(initBoard);
     this.hasStarted = false;
     this.firstTileRevealed = false;
-    this.flagsNumber = 0;
+    this.flagsNumber.set(0);
   }
 
   handleTileClick(tile: Tile) {
+    console.log('handleTileClick');
+    let currentBoard = this.board();
+    console.log('currentBoard = ' + currentBoard.id);
+    console.log('currentBoard = ' + currentBoard.status);
+    console.log('currentBoard = ' + currentBoard.isWon());
     this.start();
     if (!this.firstTileRevealed) {
-      this.tileService.finishInitialization(
-        this.board.tiles,
+      this.boardService.finishInitialization(
+        currentBoard.tiles,
         this.generationStrategy,
-        this.minesNumber,
+        this.minesNumber(),
         tile,
       );
       this.firstTileRevealed = true;
@@ -63,15 +119,23 @@ export class ClassicalBoardComponent implements OnInit {
     if (!tile || tile.isFlagged) {
       return;
     }
-    if (this.board.isGameOver() || this.board.isWon()) {
+    if (currentBoard.isGameOver() || currentBoard.isWon()) {
       return;
     }
-    this.tileService.revealTile(this.board, tile);
+    console.log('handleTileClick : old status6 ' + this.board().status);
+    this.boardService.revealTile(currentBoard, tile);
 
-    if (this.board.isWon() || this.board.isGameOver()) {
+    console.log('handleTileClick : old status7 ' + this.board().status);
+    console.log('handleTileClick : set board ');
+    this.board.set(Object.create(currentBoard));
+    console.log('handleTileClick : status ' + currentBoard.status);
+    console.log(
+      'handleTileClick : currentBoard.isWon() ' + currentBoard.isWon(),
+    );
+    if (currentBoard.isWon() || currentBoard.isGameOver()) {
       this.notifyGameStatus.emit({
-        status: this.board.status,
-        flagged: this.flagsNumber,
+        status: currentBoard.status,
+        flagged: this.flagsNumber(),
         time: this.timerService.counter - 1,
       });
     }
@@ -82,8 +146,8 @@ export class ClassicalBoardComponent implements OnInit {
 
     if (tile.isRevealed) return false;
     tile.isFlagged = !tile.isFlagged;
-    if (tile.isFlagged) this.flagsNumber++;
-    else this.flagsNumber--;
+    if (tile.isFlagged) this.flagsNumber.update((flagNumber) => ++flagNumber);
+    else this.flagsNumber.update((flagNumber) => --flagNumber);
     return false;
   }
 
@@ -92,23 +156,18 @@ export class ClassicalBoardComponent implements OnInit {
       this.hasStarted = true;
       this.notifyGameStatus.emit({
         status: 'ONGOING',
-        flagged: this.flagsNumber,
+        flagged: this.flagsNumber(),
         time: this.timerService.counter,
       });
     }
   }
 
-  getGameStatus(): string {
-    if (this.board.status == 'GAMEOVER') return 'lost';
-    if (this.board.status == 'WON') return 'won';
-    return 'play';
-  }
-
   restartGame() {
     this.restartGameEvent.emit();
-  }
-
-  get tiles(): Tile[][] {
-    return this.board.tiles;
+    this.initializeBoard(
+      this.rowsNumber(),
+      this.columnsNumber(),
+      this.minesNumber(),
+    );
   }
 }
