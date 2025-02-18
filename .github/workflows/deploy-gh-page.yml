@@ -21,7 +21,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: ng build --base-href /minesweeper/ --configuration gh-page
+        run: npm run ng build -- --base-href /minesweeper/ --configuration gh-page
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
