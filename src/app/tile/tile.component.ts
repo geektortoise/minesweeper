@@ -1,5 +1,5 @@
-import { Component, input, InputSignal } from '@angular/core';
-import { Tile } from './tile';
+import { Component, input } from '@angular/core';
+import { Tile } from '../model/tile';
 
 @Component({
   selector: 'tile',

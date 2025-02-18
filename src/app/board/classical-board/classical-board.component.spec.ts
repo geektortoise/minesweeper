@@ -1,22 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ClassicalBoardComponent } from './classical-board.component';
+import { StateService } from '../../service/state/state.service';
 
 describe('ClassicalBoardComponent', () => {
   let component: ClassicalBoardComponent;
   let fixture: ComponentFixture<ClassicalBoardComponent>;
-  let gameStatusOutputSpy;
+  let yearQuartersOutputSpy;
+  let stateService: StateService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ClassicalBoardComponent],
     }).compileComponents();
+    stateService = TestBed.inject(StateService);
 
     fixture = TestBed.createComponent(ClassicalBoardComponent);
     component = fixture.componentInstance;
-    fixture.componentRef.setInput('rowsNumber', '10');
-    fixture.componentRef.setInput('columnsNumber', '10');
-    fixture.componentRef.setInput('minesNumber', '10');
+
+    let options = new Map<string, number>();
+    options.set('rowsNumber', 10);
+    options.set('columnsNumber', 10);
+    options.set('minesNumber', 10);
+    stateService.setGameSettings(options);
 
     fixture.detectChanges();
   });
@@ -57,31 +63,41 @@ describe('ClassicalBoardComponent', () => {
   });
 
   it('check victory', () => {
-    fixture.componentRef.setInput('minesNumber', '0');
+    stateService.setGameSettings(
+      new Map<string, number>(stateService.getGameSettings()()).set(
+        'minesNumber',
+        0,
+      ),
+    );
     fixture.detectChanges();
-    gameStatusOutputSpy = jest.spyOn(component.notifyGameStatus, 'emit');
+    yearQuartersOutputSpy = jest.spyOn(component.notifyGameStatus, 'emit');
 
     component.handleTileClick(component.tiles()[0][0]);
 
-    expect(gameStatusOutputSpy).toHaveBeenCalledWith(
+    expect(yearQuartersOutputSpy).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'ONGOING' }),
     );
-    expect(gameStatusOutputSpy).toHaveBeenCalledWith(
+    expect(yearQuartersOutputSpy).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'WON' }),
     );
   });
 
   it('check defeat', () => {
-    fixture.componentRef.setInput('minesNumber', '100');
+    stateService.setGameSettings(
+      new Map<string, number>(stateService.getGameSettings()()).set(
+        'minesNumber',
+        100,
+      ),
+    );
     fixture.detectChanges();
-    gameStatusOutputSpy = jest.spyOn(component.notifyGameStatus, 'emit');
+    yearQuartersOutputSpy = jest.spyOn(component.notifyGameStatus, 'emit');
 
     component.handleTileClick(component.tiles()[0][0]);
 
-    expect(gameStatusOutputSpy).toHaveBeenCalledWith(
+    expect(yearQuartersOutputSpy).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'ONGOING' }),
     );
-    expect(gameStatusOutputSpy).toHaveBeenCalledWith(
+    expect(yearQuartersOutputSpy).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'GAMEOVER' }),
     );
   });

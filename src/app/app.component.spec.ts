@@ -1,11 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { GameComponent } from './game/game.component';
+import { getTranslocoModule } from './utils/transloco-testing.module';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent, GameComponent],
+      imports: [AppComponent, GameComponent, getTranslocoModule()],
     }).compileComponents();
   });
 

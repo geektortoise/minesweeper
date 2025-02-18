@@ -1,4 +1,4 @@
-<div style="text-align: center" #content>
+<div class="gameStage">
   <br />
   <img
     class="animate__animated animate__rubberBand"
@@ -6,88 +6,22 @@
   />
   <br />
   <br />
-  <table>
-    <tr>
-      <td>
-        <span
-          class="button"
-          (click)="startNewGame(10, 10, 18); displayInputs = false"
-          [attr.tooltip]="'beginner.catchphrase' | transloco"
-          tooltip-position="bottom"
-          >{{ "beginner.title" | transloco }}</span
-        >
-      </td>
-      <td>
-        <span
-          class="button"
-          (click)="startNewGame(16, 16, 48); displayInputs = false"
-          [attr.tooltip]="'intermediate.catchphrase' | transloco"
-          tooltip-position="bottom"
-          >{{ "intermediate.title" | transloco }}</span
-        >
-      </td>
-      <td>
-        <span
-          class="button"
-          (click)="startNewGame(16, 24, 72); displayInputs = false"
-          [attr.tooltip]="'expert.catchphrase' | transloco"
-          tooltip-position="bottom"
-          >{{ "expert.title" | transloco }}</span
-        >
-      </td>
-      <td>
-        <span
-          class="button"
-          (click)="customGame()"
-          [attr.tooltip]="'custom.catchphrase' | transloco"
-          tooltip-position="bottom"
-          >{{ "custom.title" | transloco }}</span
-        >
-      </td>
-    </tr>
-    @if (displayInputs) {
-      <tr>
-        <td>
-          <b>{{ "rows" | transloco }}: </b>
-          <input
-            #customRowsInput
-            type="number"
-            min="3"
-            (input)="boardRowsNumber.set(Number(customRowsInput.value))"
-          />
-        </td>
-        <td>
-          <b>{{ "columns" | transloco }}: </b>
-          <input
-            #customColumnsInput
-            type="number"
-            min="3"
-            (input)="boardColumnsNumber.set(Number(customColumnsInput.value))"
-          />
-        </td>
-        <td>
-          <b>{{ "mines" | transloco }}: </b>
-          <input
-            #customMinesInput
-            type="number"
-            min="1"
-            [max]="maxMines()"
-            (input)="boardMinesNumber.set(Number(customMinesInput.value))"
-          />
-        </td>
-      </tr>
+  <div class="buttonsMenu">
+    @for (boardType of boardTypes; track $index) {
+      <span
+        class="button"
+        (click)="selectBoardType(boardType)"
+        [attr.tooltip]="'board.' + boardType + '.catchphrase' | transloco"
+        tooltip-position="top"
+      >
+        {{ "board." + boardType + ".title" | transloco }}
+      </span>
     }
-  </table>
-
-  <classical-board
-    [rowsNumber]="boardRowsNumber()"
-    [columnsNumber]="boardColumnsNumber()"
-    [minesNumber]="boardMinesNumber()"
-    (notifyGameStatus)="updateGameStatus($event)"
-    (restartGameEvent)="startNewGame()"
-  ></classical-board>
+  </div>
+  <ng-template #gridOptionSlot></ng-template>
 
   <overlay [overlayData]="overlayData"></overlay>
+  <ng-template #boardSlot></ng-template>
 
   <span
     class="settings"

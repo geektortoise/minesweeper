@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TileComponent } from './tile.component';
+import { Tile } from '../model/tile';
 
 describe('TileComponent', () => {
   let component: TileComponent;
@@ -13,6 +14,7 @@ describe('TileComponent', () => {
 
     fixture = TestBed.createComponent(TileComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('tile', new Tile(0, false));
     fixture.detectChanges();
   });
 

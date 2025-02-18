@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../service/storage/storage.service';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { HistoryRecord } from '../utils/types';
+import { GameMode, HistoryRecord } from '../utils/types';
 
 @Component({
   selector: 'history',
@@ -18,4 +18,6 @@ export class HistoryComponent implements OnInit {
   ngOnInit(): void {
     this.history = this.storageService.getHistory();
   }
+
+  protected readonly GameMode = GameMode;
 }

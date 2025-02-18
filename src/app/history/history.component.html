@@ -4,6 +4,7 @@
     <table>
       <tr class="custom-th">
         <th>{{ "history.status" | transloco }}</th>
+        <th>{{ "history.type" | transloco }}</th>
         <th>{{ "history.mode" | transloco }}</th>
         <th>{{ "history.time" | transloco }}</th>
         <th>{{ "history.flagged" | transloco }}</th>
@@ -12,10 +13,14 @@
       @for (item of history; track item.date) {
         <tr>
           <td>{{ item.status | transloco }}</td>
+          <td>{{ "board." + item.type.toString() + ".title" | transloco }}</td>
           <td>
-            {{ item.mode | transloco }}
-            @if (item.mode === "Custom") {
-              <span> ({{ item.input?.row }}x{{ item.input?.column }}) </span>
+            {{ "level." + item.level + ".title" | transloco }}
+            @if (item.level === GameMode.CUSTOM) {
+              <span>
+                ({{ item.inputs?.dimensions?.join("x") }} &
+                {{ item.inputs?.mines }})
+              </span>
             }
           </td>
           <td>{{ item.time * 1000 | date: "mm:ss" }}</td>

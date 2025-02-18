@@ -1,7 +1,7 @@
-import { Board } from '../board';
-import { Tile } from '../../tile/tile';
+import { Board } from './board';
+import { Tile } from './tile';
 
-export class ClassicalBoard extends Board {
+export class BiDimensionalBoard extends Board {
   // the representation of the tiles on the board
   tiles: Tile[][];
   numberOfMinesLeft: number;

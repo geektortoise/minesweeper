@@ -1,11 +1,19 @@
-import { Component, computed, signal } from '@angular/core';
-import { ClassicalBoardComponent } from '../board/classical-board/classical-board.component';
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  Injector,
+  OutputRefSubscription,
+  signal,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfettiService } from '../service/confetti/confetti.service';
 import { TimerService } from '../service/timer/timer.service';
 import { StorageService } from '../service/storage/storage.service';
-import { HistoryComponent } from '../history/history.component';
 import {
+  BoardType,
   GameMode,
   HistoryRecord,
   NotificationStatus,
@@ -13,77 +21,80 @@ import {
   OverlayData,
 } from '../utils/types';
 import { OverlayComponent } from '../overlay/overlay.component';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Subject } from 'rxjs';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { BoardComponent } from '../board/board.component';
+import { Board } from '../model/board';
+import { BoardFactoryService } from '../service/board-factory.service';
+import { StateService } from '../service/state/state.service';
 
 @Component({
   selector: 'game',
-  imports: [
-    ClassicalBoardComponent,
-    HistoryComponent,
-    FormsModule,
-    FormsModule,
-    OverlayComponent,
-    TranslocoPipe,
-  ],
+  imports: [FormsModule, FormsModule, OverlayComponent, TranslocoPipe],
   templateUrl: './game.component.html',
   styleUrl: './game.component.css',
 })
-export class GameComponent {
+export class GameComponent implements AfterViewInit {
+  @ViewChild('boardSlot', { read: ViewContainerRef })
+  boardSlot!: ViewContainerRef;
+  @ViewChild('gridOptionSlot', { read: ViewContainerRef })
+  gridOptionSlot!: ViewContainerRef;
+  minesweeper!: BoardComponent<Board>;
+  boardType = signal(BoardType.Classic);
+
   result: 'NOT_STARTED' | 'ONGOING' | 'WON' | 'GAMEOVER';
-  //@ViewChild('minesweeper') minesweeper!: ClassicalBoardComponent;
   boardRowsNumber = signal<number>(10);
   boardColumnsNumber = signal<number>(10);
   boardMinesNumber = signal<number>(10);
 
-  _resetBoard = new Subject<void>();
-  resetBoard = this._resetBoard.asObservable();
-
-  maxMines = computed(() => {
-    return this.boardRowsNumber() * this.boardColumnsNumber();
-  });
-
-  mode: GameMode = GameMode.BEGINNER;
-  displayInputs: boolean = false;
   overlayData: OverlayData = {
     display: false,
     content: OverlayContent.HISTORY,
   };
+  private subscriptions: OutputRefSubscription[] = [];
 
   constructor(
     private conffetiService: ConfettiService,
     private timerService: TimerService,
     private storageService: StorageService,
+    private stateService: StateService,
+    private boardFactoryService: BoardFactoryService,
+    private injector: Injector,
   ) {}
 
-  startNewGame(rows?: number, columns?: number, mines?: number, mode?: string) {
-    if (mode) {
-      this.mode = mode as GameMode;
-    }
+  ngAfterViewInit() {
+    effect(
+      () => {
+        this.renderDynamicBoard(this.boardType());
+      },
+      { injector: this.injector },
+    );
+  }
+
+  startNewGame() {
     this.result = 'NOT_STARTED';
     this.timerService.clear();
     this.conffetiService.stopConfettis(true);
-    if (rows !== undefined && columns !== undefined && mines !== undefined) {
-      this.boardRowsNumber.set(rows);
-      this.boardColumnsNumber.set(columns);
-      this.boardMinesNumber.set(mines);
-    }
   }
 
   updateGameStatus(event: NotificationStatus) {
     if (event.status === 'WON' || event.status === 'GAMEOVER') {
+      let currentBoard = this.stateService.getBoardType()();
+      let currentLevel = this.stateService.getGameLevel()();
       let record: HistoryRecord = {
         ...event,
-        mode: this.mode,
+        type: currentBoard,
+        level: currentLevel,
         date: new Date(),
       };
-      if (this.mode === GameMode.CUSTOM) {
-        record.input = {
-          row: this.boardRowsNumber(),
-          column: this.boardColumnsNumber(),
-          mine: this.boardMinesNumber(),
+      if (currentLevel === GameMode.CUSTOM) {
+        record.inputs = {
+          dimensions: [...this.stateService.getGameSettings()().entries()]
+            .filter(([key, _]) => key !== 'minesNumber')
+            .map(([_, value]) => value),
+          mines: this.stateService.getGameSettings()().get('minesNumber') ?? -1,
         };
       }
+
       this.storageService.insertHistoryRecord(record);
       if (event.status === 'WON') {
         this.conffetiService.stopConfettis(false);
@@ -101,15 +112,47 @@ export class GameComponent {
     }
   }
 
-  customGame() {
-    this.mode = GameMode.CUSTOM;
-    if (!this.displayInputs) {
-      this.displayInputs = true;
-    }
-    this.boardRowsNumber.set(3);
-    this.boardColumnsNumber.set(3);
-    this.boardMinesNumber.set(1);
-    this.startNewGame();
+  get boardTypes(): string[] {
+    return Object.values(BoardType);
+  }
+
+  selectBoardType(boardType: string) {
+    let key =
+      Object.keys(BoardType).find(
+        (x) => BoardType[x as keyof typeof BoardType] == boardType,
+      ) ?? '';
+    let type: BoardType = BoardType[key as keyof typeof BoardType];
+    this.boardType.set(type);
+    this.stateService.setBoardType(type);
+    return;
+  }
+
+  private renderDynamicBoard(type: BoardType) {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+    this.boardSlot.clear();
+    this.subscriptions = [];
+
+    this.minesweeper = this.boardFactoryService.generateBoardComponent(
+      this.boardSlot,
+      type,
+    );
+
+    this.subscriptions.push(
+      this.minesweeper.notifyGameStatus.subscribe((val) =>
+        this.updateGameStatus(val),
+      ),
+    );
+    this.subscriptions.push(
+      this.minesweeper.restartGameEvent.subscribe(() => this.startNewGame()),
+    );
+
+    this.gridOptionSlot.clear();
+
+    this.boardFactoryService.generateGridOptions(
+      this.gridOptionSlot,
+      this.minesweeper,
+      type,
+    );
   }
 
   settings() {

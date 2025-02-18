@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Tile } from '../../tile/tile';
+import { Tile } from '../../model/tile';
 import { Util } from '../../utils/util';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TileService {
+  idCounter = 1;
   constructor() {}
 
   reveal(tile: Tile) {
@@ -26,7 +27,7 @@ export class TileService {
   generateTiles(tilesNumber: number): Tile[] {
     let tiles: Tile[] = [];
     for (let i = 0; i < tilesNumber; i++) {
-      tiles.push(new Tile(i, false));
+      tiles.push(this.generateTile(true, false));
     }
     return tiles;
   }
@@ -35,12 +36,22 @@ export class TileService {
     let tilesNumber = tiles.length;
     minesNumber = Math.min(tilesNumber, minesNumber);
     while (minesNumber > 0) {
-      var idxMine = Util.getRandomInt(0, tilesNumber);
+      let idxMine = Util.getRandomInt(0, tilesNumber);
       if (!tiles[idxMine].isMine) {
         tiles[idxMine].isMine = true;
         minesNumber--;
       }
     }
     return tiles;
+  }
+
+  generateTile(isEnabled = true, isMine = false) {
+    let t: Tile = new Tile(this.idCounter++, isMine);
+    if (!isEnabled) t.isEnabled = false;
+    return t;
+  }
+
+  getDeadTile() {
+    return this.generateTile(false, false);
   }
 }

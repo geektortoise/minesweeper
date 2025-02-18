@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  HostListener,
-  Input,
-  Output,
-} from '@angular/core';
+import { Component, HostListener, input } from '@angular/core';
 import { HistoryComponent } from '../history/history.component';
 import { CommonModule } from '@angular/common';
 import { OverlayContent, OverlayData } from '../utils/types';
@@ -16,7 +10,7 @@ import { OverlayContent, OverlayData } from '../utils/types';
   styleUrl: './overlay.component.css',
 })
 export class OverlayComponent {
-  @Input() overlayData: OverlayData;
+  overlayData = input.required<OverlayData>();
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
@@ -30,6 +24,6 @@ export class OverlayComponent {
   }
 
   off() {
-    this.overlayData.display = false;
+    this.overlayData().display = false;
   }
 }
