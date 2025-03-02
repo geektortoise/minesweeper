@@ -1,7 +1,7 @@
 <div class="gameStage">
   <br />
   <img
-    class="animate__animated animate__rubberBand"
+    class="animate__animated animate__rubberBand ms-logo"
     src="./assets/images/logo.png"
   />
   <br />
@@ -9,7 +9,7 @@
   <div class="buttonsMenu">
     @for (boardType of boardTypes; track $index) {
       <span
-        class="button"
+        class="button buttonMenu"
         (click)="selectBoardType(boardType)"
         [attr.tooltip]="'board.' + boardType + '.catchphrase' | transloco"
         tooltip-position="top"

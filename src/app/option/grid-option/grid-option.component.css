@@ -1,0 +1,21 @@
+.buttonsMenu {
+  display: flex;
+  justify-content: center;
+  @media (max-width: 720px) {
+    column-gap: 30px;
+  }
+  @media (min-width: 721px) and (max-width: 920px) {
+    column-gap: 50px;
+  }
+  @media (min-width: 921px) {
+    column-gap: 80px;
+  }
+  flex-wrap: wrap;
+  padding: 20px;
+}
+
+.buttonMenu {
+  @media (max-width: 600px) {
+    margin-bottom: 10px;
+  }
+}
