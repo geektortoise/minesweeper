@@ -32,7 +32,11 @@
           <input
             type="number"
             [min]="dimension.min"
-            [max]="dimension.settingName === 'minesNumber' ? maxMines() : null"
+            [max]="
+              dimension.settingName === 'minesNumber'
+                ? maxMines()
+                : dimension.max
+            "
             [value]="dimension.min"
             (input)="
               updateDimension(

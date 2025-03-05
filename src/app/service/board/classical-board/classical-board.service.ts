@@ -51,8 +51,8 @@ export class ClassicalBoardService extends BiDimensionalBoardService {
 
   getDimensions() {
     let dimensions = [
-      { label: 'rows', settingName: 'rowsNumber', min: 3 },
-      { label: 'columns', settingName: 'columnsNumber', min: 3 },
+      { label: 'rows', settingName: 'rowsNumber', min: 3, max: 75 },
+      { label: 'columns', settingName: 'columnsNumber', min: 3, max: 75 },
       { label: 'mines', settingName: 'minesNumber', min: 1 },
     ];
     return dimensions;

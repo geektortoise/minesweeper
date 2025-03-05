@@ -73,7 +73,7 @@ export class DiamondBoardService extends BiDimensionalBoardService {
 
   getDimensions() {
     let dimensions = [
-      { label: 'radius', settingName: 'radius', min: 3 },
+      { label: 'radius', settingName: 'radius', min: 3, max: 50 },
       { label: 'mines', settingName: 'minesNumber', min: 1 },
     ];
     return dimensions;
