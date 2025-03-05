@@ -10,16 +10,24 @@ export class TileService {
   constructor() {}
 
   reveal(tile: Tile) {
-    if (tile.isFlagged) return;
-    if (tile.isRevealed) return;
-    tile.isRevealed = true;
+    const tilesToReveal = [tile];
 
-    if (tile.isMine) return;
+    while (tilesToReveal.length > 0) {
+      const currentTile = tilesToReveal.pop()!;
 
-    let threatCount = tile.getThreatCount();
-    if (threatCount == 0) {
-      for (let neighbor of tile.neighbors) {
-        this.reveal(neighbor);
+      if (currentTile.isFlagged) continue;
+      if (currentTile.isRevealed) continue;
+      currentTile.isRevealed = true;
+
+      if (currentTile.isMine) continue;
+
+      let threatCount = currentTile.getThreatCount();
+      if (threatCount == 0) {
+        for (let neighbor of currentTile.neighbors) {
+          if (!neighbor.isRevealed && !neighbor.isFlagged) {
+            tilesToReveal.push(neighbor);
+          }
+        }
       }
     }
   }

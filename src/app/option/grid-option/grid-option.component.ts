@@ -41,11 +41,13 @@ export class GridOptionComponent {
 
   updateDimension(settingName: string, value: number) {
     const gameSettings = new Map<string, number>(this.gridOptions());
-    if (!value)
-      value =
-        this.dimensions().find((dim) => dim.settingName === settingName)?.min ??
-        3;
+    const relatedDimension = this.dimensions().find(
+      (dim) => dim.settingName === settingName,
+    );
+    if (!value) value = relatedDimension?.min ?? 3;
 
+    if (relatedDimension?.max && value > relatedDimension?.max)
+      value = relatedDimension?.max;
     gameSettings.set(settingName, value);
     this.gridOptions.set(gameSettings);
   }

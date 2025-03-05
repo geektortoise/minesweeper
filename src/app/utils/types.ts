@@ -19,6 +19,7 @@ export type GridDimensionOption = {
   label: string;
   settingName: string;
   min: number;
+  max?: number;
 };
 
 export interface BoardInput {
