@@ -2,6 +2,7 @@ import {
   Component,
   computed,
   effect,
+  inject,
   output,
   Signal,
   signal,
@@ -23,6 +24,10 @@ export abstract class BoardComponent<T extends Board> {
   notifyGameStatus = output<NotificationStatus>();
   restartGameEvent = output<void>();
 
+  public boardService = inject(BoardService);
+  protected stateService = inject(StateService);
+  public timerService = inject(TimerService);
+
   protected board: WritableSignal<T>;
 
   flagsNumber = signal<number>(0);
@@ -42,11 +47,7 @@ export abstract class BoardComponent<T extends Board> {
     () => this.stateService.getGameSettings()().get('minesNumber') ?? 18,
   );
 
-  constructor(
-    public boardService: BoardService,
-    protected stateService: StateService,
-    public timerService: TimerService,
-  ) {
+  constructor() {
     effect(() => {
       let settings = this.stateService.getGameSettings();
       this.initializeBoard();
