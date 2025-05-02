@@ -1,4 +1,4 @@
-import { Injectable, ViewContainerRef } from '@angular/core';
+import { Injectable, Type, ViewContainerRef } from '@angular/core';
 import { ClassicalBoardComponent } from '../board/classical-board/classical-board.component';
 import { BoardComponent } from '../board/board.component';
 import { ToricBoardComponent } from '../board/classical-board/toric-board/toric-board.component';
@@ -13,8 +13,7 @@ import { BoardType } from '../utils/types';
   providedIn: 'root',
 })
 export class BoardFactoryService {
-  componentMap: Record<BoardType, any> = {
-    //TODO change the any to a BOARD parent class
+  componentMap: Record<BoardType, Type<BoardComponent>> = {
     [BoardType.Classic]: ClassicalBoardComponent,
     [BoardType.Toric]: ToricBoardComponent,
     [BoardType.Circle]: CircleBoardComponent,
