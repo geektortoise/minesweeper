@@ -349,7 +349,7 @@ export class AxoBoardService extends BiDimensionalBoardService {
     let tileBoard: Tile[][] = [];
     for (let i = 0; i < sizeLength; i++) {
       tileBoard[i] = [];
-      for (let j = 0; j < sizeLength; j++) {
+      for (let j = 0; j < pattern[i].length; j++) {
         tileBoard[i].push(
           this.tileService.generateTile(pattern[i][j] == 'x', false),
         );
