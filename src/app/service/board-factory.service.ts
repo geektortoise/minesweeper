@@ -13,7 +13,7 @@ import { BoardType } from '../utils/types';
   providedIn: 'root',
 })
 export class BoardFactoryService {
-  componentMap: Record<BoardType, Type<BoardComponent>> = {
+  componentMap: Record<BoardType, Type<BoardComponent<any>>> = {
     [BoardType.Classic]: ClassicalBoardComponent,
     [BoardType.Toric]: ToricBoardComponent,
     [BoardType.Circle]: CircleBoardComponent,
